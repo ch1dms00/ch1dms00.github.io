@@ -2,23 +2,20 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>로그인 페이지</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- 모바일 필수 -->
+    <title>학생복지위원회 메인페이지</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container">
-        <img src="swc로고.png" alt="로고" class="logo">
-        <form id="loginForm">
-            <input type="text" id="studentID" placeholder="학번" required>
-            <input type="password" id="password" placeholder="비밀번호" required>
-            <div class="remember">
-                <input type="checkbox" id="rememberMe">
-                <label for="rememberMe">로그인 정보 저장</label>
-            </div>
-            <button type="submit">로그인</button>
-            <p id="message"></p>
-        </form>
+    <div class="main-container">
+        <div class="background-logo"></div>
+        <div class="menu-grid">
+            <a href="#intro" class="menu-item">학생복지위원회 소개</a>
+            <a href="#rental" class="menu-item">물품 대여 신청</a>
+            <a href="#bus" class="menu-item">버스 대여 신청</a>
+            <a href="#info" class="menu-item">내 정보</a>
+        </div>
     </div>
-    <script src="script.js"></script>
 </body>
 </html>
+
