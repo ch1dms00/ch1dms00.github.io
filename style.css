@@ -1,56 +1,57 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #f0f5ff;
+    font-family: 'Segoe UI', sans-serif;
+    background-color: #f4f7ff;
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
-    margin: 0;
+    overflow: auto;
 }
 
-.container {
-    width: 350px;
-    padding: 40px;
-    background-color: #fff;
+.container, .main-container {
+    width: 90%;
+    max-width: 400px;
+    padding: 20px;
+    background-color: #ffffff;
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
     border-radius: 10px;
-    text-align: center;
+    margin: 20px 0;
 }
 
 .logo {
-    width: 120px;
-    margin-bottom: 20px;
+    width: 80px;
+    margin: 0 auto 15px;
+    display: block;
 }
 
 input[type="text"], input[type="password"] {
     width: 100%;
     padding: 10px;
     margin: 8px 0;
-    box-sizing: border-box;
     border-radius: 5px;
     border: 1px solid #ccc;
 }
 
 .remember {
-    text-align: left;
-    margin: 15px 0;
     display: flex;
     align-items: center;
-}
-
-.remember input {
-    margin-right: 5px;
+    margin: 10px 0;
 }
 
 button {
     width: 100%;
     padding: 10px;
-    border: none;
     background-color: #7b68ee;
-    color: #fff;
+    color: white;
+    border: none;
     border-radius: 5px;
     cursor: pointer;
-    margin-top: 10px;
 }
 
 button:hover {
@@ -59,103 +60,55 @@ button:hover {
 
 #message {
     margin-top: 10px;
-    font-size: 0.9em;
-}
-.main-container {
-    width: 800px;
-    margin: 50px auto;
-    background-color: #fff;
-    padding: 40px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    border-radius: 10px;
     text-align: center;
 }
 
-.main-container .logo {
-    width: 100px;
-    margin-bottom: 20px;
-}
-
-nav ul {
-    list-style: none;
-    padding: 0;
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-    margin-bottom: 30px;
-}
-
-nav ul li a {
-    text-decoration: none;
-    color: #4a54e1;
-    font-weight: bold;
-}
-
-nav ul li a:hover {
-    color: #333;
-}
-
-section {
-    text-align: left;
-    margin-bottom: 30px;
-    padding: 20px;
-    background-color: #f9f9f9;
-    border-radius: 8px;
-}
-body {
-    margin: 0;
-    padding: 0;
-    background-color: #f4f7ff;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    overflow: hidden;
-}
-
-.main-container {
-    position: relative;
-    width: 800px;
-    height: 600px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
 .background-logo {
-    position: absolute;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     background-image: url('swc로고.png');
-    background-size: 450px; /* 크기를 더 크게 조정 */
+    background-size: 70%; /* 모바일 화면 크기에 맞춤 */
     background-repeat: no-repeat;
     background-position: center;
-    opacity: 0.12; /* 투명도는 유지 */
+    opacity: 0.1;
     width: 100%;
     height: 100%;
+    z-index: -1;
 }
 
 .menu-grid {
     display: grid;
-    grid-template-columns: repeat(2, 180px);
-    grid-template-rows: repeat(2, 180px);
-    gap: 20px;
-    z-index: 1;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    margin-top: 20px;
 }
 
 .menu-item {
-    background-color: #b2a4f5; /* 연한 보라색으로 변경 */
-    color: #ffffff;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-radius: 12px;
-    text-decoration: none;
-    font-weight: bold;
+    background-color: #b2a4f5;
+    color: white;
+    padding: 30px 10px;
+    border-radius: 10px;
     text-align: center;
+    font-size: 0.9em;
+    text-decoration: none;
     transition: 0.3s;
-    padding: 10px;
 }
 
 .menu-item:hover {
-    background-color: #9b8ff0; /* 약간 진한 연보라색 */
-    transform: translateY(-5px);
+    background-color: #9b8ff0;
+    transform: translateY(-3px);
+}
+
+/* 모바일 화면 반응형 조정 */
+@media (max-width: 500px) {
+    .menu-item {
+        padding: 20px 5px;
+        font-size: 0.85em;
+    }
+
+    .background-logo {
+        background-size: 90%;
+    }
 }
