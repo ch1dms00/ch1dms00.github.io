@@ -23,20 +23,21 @@
   </div>
 
   <script>
-    window.addEventListener('DOMContentLoaded', function () {
-      const noticeList = document.getElementById('noticeList');
-      const notices = JSON.parse(localStorage.getItem('notices')) || [];
+  const noticeList = document.getElementById('noticeList');
+  const notices = JSON.parse(localStorage.getItem('notices') || '[]');
 
-      if (notices.length > 0) {
-        noticeList.innerHTML = '';
-        notices.forEach(notice => {
-          const div = document.createElement('div');
-          div.classList.add('notice-item');
-          div.innerHTML = `<h3>${notice.title}</h3><p>${notice.content}</p><hr>`;
-          noticeList.appendChild(div);
-        });
-      }
+  if (notices.length > 0) {
+    noticeList.innerHTML = '';
+    notices.forEach(notice => {
+      const div = document.createElement('div');
+      div.classList.add('notice-item');
+      const contentWithBreaks = notice.content.replace(/\n/g, '<br>');
+      div.innerHTML = `<h3>${notice.title}</h3><p>${contentWithBreaks}</p><hr>`;
+      noticeList.appendChild(div);
     });
-  </script>
+  } else {
+    noticeList.innerHTML = '<p class="notice-placeholder">📌 추후 공지사항이 이곳에 추가될 예정입니다.</p>';
+  }
+</script>
 </body>
 </html>
