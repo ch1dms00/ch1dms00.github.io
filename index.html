@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>한림대학교 로그인</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    :root {
+      --main-color: #6C63FF;
+      --bg-color: #F0F2F5;
+      --box-color: #ffffff;
+      --text-color: #333;
+    }
+
+    * {
+      box-sizing: border-box;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      margin: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+
+    .login-container {
+      background-color: var(--box-color);
+      padding: 3rem 2rem;
+      border-radius: 2rem;
+      box-shadow: 10px 10px 30px rgba(0, 0, 0, 0.05);
+      width: 90%;
+      max-width: 400px;
+      text-align: center;
+    }
+
+    .login-container h1 {
+      margin-bottom: 1.5rem;
+      color: var(--main-color);
+      font-size: 1.8rem;
+    }
+
+    .login-container input {
+      width: 100%;
+      padding: 0.9rem;
+      margin: 0.6rem 0;
+      border: none;
+      border-radius: 1rem;
+      background-color: #f0f0f0;
+      font-size: 1rem;
+      transition: 0.2s ease;
+    }
+
+    .login-container input:focus {
+      outline: none;
+      background-color: #e8e8ff;
+    }
+
+    .login-container button {
+      width: 100%;
+      padding: 0.9rem;
+      margin-top: 1rem;
+      background-color: var(--main-color);
+      border: none;
+      border-radius: 1rem;
+      color: white;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+
+    .login-container button:hover {
+      background-color: #594ae2;
+    }
+
+    .footer {
+      margin-top: 2rem;
+      font-size: 0.85rem;
+      color: #aaa;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <h1>한림대학교 로그인</h1>
+    <form action="main.html" method="GET">
+      <input type="text" name="name" placeholder="이름을 입력하세요" required>
+      <input type="text" name="student_id" placeholder="학번 (8자리)" pattern="\d{8}" title="8자리 학번을 입력하세요" required>
+      <input type="text" name="major" placeholder="전공을 입력하세요" required>
+      <button type="submit">로그인</button>
+    </form>
+    <div class="footer">ⓒ 2025 Hallym Univ. Welfare Committee</div>
+  </div>
+</body>
+</html>
