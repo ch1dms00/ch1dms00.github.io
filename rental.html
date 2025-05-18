@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>대여일자 선택</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      font-family: 'Segoe UI';
+      background-color: #f3f0ff;
+      margin: 0;
+      padding: 0;
+    }
+    .rental-container {
+      max-width: 500px;
+      margin: 30px auto;
+      padding: 20px;
+      background: white;
+      border-radius: 15px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+    .rental-title {
+      font-size: 22px;
+      color: #4a54e1;
+      margin-bottom: 20px;
+    }
+    .calendar-controls {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 10px;
+    }
+    .calendar-controls button {
+      background-color: #b29dff;
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    #month-label {
+      font-size: 16px;
+      font-weight: bold;
+      color: #333;
+    }
+    .calendar-grid {
+      display: flex;
+      flex-direction: column;
+    }
+    .calendar-row {
+      display: flex;
+    }
+    .calendar-cell {
+      flex: 1;
+      margin: 2px;
+      padding: 12px 0;
+      background: #f9f9ff;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .calendar-row.header .calendar-cell {
+      font-weight: bold;
+      background-color: #eee6ff;
+      cursor: default;
+    }
+    .selected {
+      background-color: #7b68ee !important;
+      color: white;
+      font-weight: bold;
+      border: 2px solid #4a54e1;
+    }
+    .disabled {
+      background-color: #eee !important;
+      color: #999 !important;
+      cursor: not-allowed !important;
+    }
+    .selected-date-display {
+      font-size: 15px;
+      color: #4a54e1;
+      font-weight: bold;
+      margin: 15px 0;
+    }
+    .next-btn,
+    .back-btn {
+      display: inline-block;
+      margin: 20px 10px 0;
+      padding: 12px 24px;
+      font-weight: bold;
+      text-decoration: none;
+      border-radius: 10px;
+      font-size: 15px;
+    }
+    .next-btn {
+      background-color: #4a54e1;
+      color: white;
+    }
+    .back-btn {
+      background-color: #ccc;
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+  <div class="rental-container">
+    <h2 class="rental-title">대여일자</h2>
+
+    <div class="calendar-controls">
+      <button id="prev-btn" onclick="changeMonth(-1)">←</button>
+      <span id="month-label"></span>
+      <button id="next-btn" onclick="changeMonth(1)">→</button>
+    </div>
+
+    <div id="calendar" class="calendar-grid"></div>
+    <p id="selected-date" class="selected-date-display">선택된 대여일자: 없음</p>
+    <p style="color: #e74c3c; font-weight: bold; margin-top: 10px;">
+      ※ 주말 대여는 부위원장께 직접 연락 부탁드립니다.
+    </p>
+    <a href="return.html" class="next-btn" id="confirm-btn" style="display:none">다음</a>
+    <a href="main.html" class="back-btn">이전으로</a>
+  </div>
+
+  <script>
+    const holidays = [
+      // 공휴일
+      '2025-01-01', '2025-03-01', '2025-05-05', '2025-06-06',
+      '2025-08-15', '2025-09-10', '2025-10-03', '2025-12-25',
+      // 대체공휴일
+      '2025-05-06', '2025-09-12', '2025-10-06'
+    ];
+
+    let currentMonth = new Date();
+    let selectedDay = null;
+
+    function renderCalendar() {
+      const calendar = document.getElementById('calendar');
+      calendar.innerHTML = '';
+
+      const year = currentMonth.getFullYear();
+      const month = currentMonth.getMonth();
+      const firstDay = new Date(year, month, 1).getDay();
+      const lastDate = new Date(year, month + 1, 0).getDate();
+
+      document.getElementById('month-label').textContent = `${year}년 ${month + 1}월`;
+
+      const days = ['일','월','화','수','목','금','토'];
+      const headerRow = document.createElement('div');
+      headerRow.className = 'calendar-row header';
+      days.forEach(day => {
+        const cell = document.createElement('div');
+        cell.className = 'calendar-cell';
+        cell.textContent = day;
+        headerRow.appendChild(cell);
+      });
+      calendar.appendChild(headerRow);
+
+      let dayCount = 1;
+      for (let i = 0; i < 6; i++) {
+        const row = document.createElement('div');
+        row.className = 'calendar-row';
+        for (let j = 0; j < 7; j++) {
+          const cell = document.createElement('div');
+          cell.className = 'calendar-cell';
+
+          if (i === 0 && j < firstDay) {
+            cell.innerHTML = '';
+          } else if (dayCount <= lastDate) {
+            const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(dayCount).padStart(2, '0')}`;
+            const weekday = new Date(year, month, dayCount).getDay();
+            const isWeekend = (weekday === 0 || weekday === 6);
+            const isHoliday = holidays.includes(dateStr);
+
+            cell.textContent = dayCount;
+
+            if (isWeekend || isHoliday) {
+              cell.classList.add('disabled');
+            } else {
+              cell.onclick = function () {
+                selectedDay = dateStr;
+                localStorage.setItem("rentalDate", dateStr);
+                renderCalendar();
+                document.getElementById('selected-date').textContent = `선택된 대여일자: ${dateStr}`;
+                document.getElementById('confirm-btn').style.display = "block";
+              };
+
+              if (selectedDay === dateStr) {
+                cell.classList.add('selected');
+              }
+            }
+
+            dayCount++;
+          }
+
+          row.appendChild(cell);
+        }
+        calendar.appendChild(row);
+      }
+    }
+
+    function changeMonth(offset) {
+      currentMonth.setMonth(currentMonth.getMonth() + offset);
+      selectedDay = null;
+      renderCalendar();
+      document.getElementById('selected-date').textContent = '선택된 대여일자: 없음';
+      document.getElementById('confirm-btn').style.display = "none";
+    }
+
+    window.onload = renderCalendar;
+  </script>
+</body>
+</html>
