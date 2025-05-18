@@ -1,56 +1,74 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>공지사항 관리</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    #noticeList { margin-top: 20px; }
+    .noticeItem { border-bottom: 1px solid #ccc; padding: 10px 0; }
+  </style>
+</head>
 <body>
-    <h2>공지사항 관리</h2>
-    <form id="noticeForm">
-      <input type="text" id="title" placeholder="제목" required>
-      <textarea id="content" placeholder="내용" required></textarea>
-      <button type="submit">공지 추가</button>
-    </form>
-  
-    <ul id="noticeList"></ul>
-  
-    <script>
-      async function loadNotices() {
-        const res = await fetch('/api/notices');
-        const notices = await res.json();
-        const list = document.getElementById('noticeList');
-        list.innerHTML = '';
-        notices.forEach(notice => {
-          const li = document.createElement('li');
-          li.innerHTML = `
-            <strong>${notice.title}</strong>: ${notice.content}
-            <button onclick="deleteNotice('${notice.id}', this)">삭제</button>
-          `;
-          list.appendChild(li);
-        });
+  <h1>공지사항 관리</h1>
+  <button onclick="location.href='index.html'">← 관리자 페이지로</button>
+
+  <form id="noticeForm">
+    <label>제목: <input type="text" id="title" required /></label><br />
+    <label>내용:<br />
+      <textarea id="content" rows="4" cols="50" required></textarea>
+    </label><br />
+    <button type="submit">공지사항 추가</button>
+  </form>
+
+  <div id="noticeList"></div>
+
+  <script>
+    let notices = JSON.parse(localStorage.getItem('notices') || '[]');
+    const noticeList = document.getElementById('noticeList');
+    const form = document.getElementById('noticeForm');
+
+    function renderNotices() {
+      noticeList.innerHTML = '';
+      if (notices.length === 0) {
+        noticeList.textContent = '공지사항이 없습니다.';
+        return;
       }
-  
-      async function deleteNotice(id, btn) {
-        await fetch(`/api/notices/${id}`, { method: 'DELETE' });
-        btn.parentElement.remove();  // 화면에서 즉시 제거
-      }
-  
-      document.getElementById('noticeForm').addEventListener('submit', async e => {
-        e.preventDefault();
-        const title = document.getElementById('title').value;
-        const content = document.getElementById('content').value;
-  
-        const res = await fetch('/api/notices', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ title, content })
-        });
-  
-        const newNotice = await res.json();
-        const li = document.createElement('li');
-        li.innerHTML = `
-          <strong>${newNotice.title}</strong>: ${newNotice.content}
-          <button onclick="deleteNotice('${newNotice.id}', this)">삭제</button>
+      notices.forEach((notice, idx) => {
+        const div = document.createElement('div');
+        div.className = 'noticeItem';
+        div.innerHTML = `
+          <h3>${notice.title}</h3>
+          <p>${notice.content}</p>
+          <button onclick="deleteNotice(${idx})">삭제</button>
         `;
-        document.getElementById('noticeList').appendChild(li);
-        e.target.reset();
+        noticeList.appendChild(div);
       });
-  
-      loadNotices();
-    </script>
-  </body>
-  
+    }
+
+    function deleteNotice(index) {
+      if (confirm('정말 삭제하시겠습니까?')) {
+        notices.splice(index, 1);
+        localStorage.setItem('notices', JSON.stringify(notices));
+        renderNotices();
+      }
+    }
+
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+      const title = document.getElementById('title').value.trim();
+      const content = document.getElementById('content').value.trim();
+
+      if (!title || !content) return alert('제목과 내용을 입력해주세요.');
+
+      notices.unshift({ title, content }); // 최신글이 위로
+      localStorage.setItem('notices', JSON.stringify(notices));
+      form.reset();
+      renderNotices();
+    });
+
+    renderNotices();
+  </script>
+</body>
+</html>
+
