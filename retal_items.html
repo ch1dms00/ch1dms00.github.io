@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>물품 선택</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .rental-container {
+      width: 90%;
+      max-width: 600px;
+      margin: 30px auto;
+      text-align: center;
+    }
+    .rental-title {
+      font-size: 22px;
+      color: #4a54e1;
+      margin-bottom: 10px;
+    }
+    .selected-date-display {
+      font-size: 14px;
+      margin-bottom: 15px;
+      color: #555;
+    }
+    .item-list {
+      text-align: left;
+      font-size: 15px;
+    }
+    .item-row {
+      margin: 10px 0;
+      padding: 10px;
+      background-color: #f9f9ff;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+    }
+    .item-row button {
+      margin: 0 5px;
+      padding: 5px 10px;
+      border: none;
+      border-radius: 5px;
+      background-color: #7b68ee;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .item-row span {
+      display: inline-block;
+      min-width: 30px;
+      font-weight: bold;
+      color: #4a54e1;
+    }
+    .next-btn, .back-btn {
+      display: block;
+      width: 90%;
+      max-width: 300px;
+      margin: 20px auto;
+      padding: 12px;
+      font-weight: bold;
+      font-size: 15px;
+      border-radius: 10px;
+      text-align: center;
+      text-decoration: none;
+    }
+    .next-btn {
+      background-color: #4a54e1;
+      color: white;
+    }
+    .next-btn:hover {
+      background-color: #3f48cc;
+    }
+    .back-btn {
+      background-color: #bbb;
+      color: white;
+    }
+  </style>
+
+  <script>
+    function updateQuantity(id, change) {
+      const el = document.getElementById(id);
+      let val = parseInt(el.textContent);
+      const max = parseInt(el.dataset.max);
+      if (change === -1 && val > 0) val--;
+      if (change === 1 && val < max) val++;
+      el.textContent = val;
+    }
+
+    function saveItems() {
+      const ids = [
+        "tent", "table", "chair", "radio", "speaker", "nameTag", "easel", "mat", "mat1", "glove",
+        "rope15", "rope25", "amp1", "amp2", "lead50", "lead30", "cartBig", "cartSmall", "cartL"
+      ];
+
+      const labels = {
+        tent: "천막", table: "테이블", chair: "의자", radio: "무전기", speaker: "확성기",
+        nameTag: "명찰", easel: "이젤", mat: "돗자리", mat1: "1인용 돗자리", glove: "면장갑",
+        rope15: "줄다리기 줄 15m", rope25: "줄다리기 줄 25m", amp1: "엠프 유선", amp2: "엠프 무선",
+        lead50: "리드선 50m", lead30: "리드선 30m", cartBig: "운반기 대형",
+        cartSmall: "운반기 소형", cartL: "운반기 L카트"
+      };
+
+      let result = "";
+
+      ids.forEach(id => {
+        const el = document.getElementById(id);
+        const count = parseInt(el.textContent);
+        if (count > 0) {
+          result += `${labels[id]} ${count}개, `;
+        }
+      });
+
+      result = result.replace(/,\s*$/, "");
+      localStorage.setItem("rentalItems", result);
+    }
+
+    window.onload = function () {
+  const rental = localStorage.getItem("rentalDate") || "미선택";
+  const returnDate = localStorage.getItem("returnDate") || "미선택";
+  const returnTime = localStorage.getItem("returnTime") || "미선택";
+
+  const selectedInfoEl = document.getElementById("selectedDates");
+  if (selectedInfoEl) {
+    selectedInfoEl.textContent = `대여일: ${rental} / 반납일: ${returnDate} / 반납시간: ${returnTime}`;
+  }
+};
+
+
+  </script>
+</head>
+
+<body class="intro-page">
+  <div class="rental-container">
+    <h2 class="rental-title">물품 선택</h2>
+    <p class="selected-date-display" id="selectedDates">대여일 / 반납일: 없음</p>
+
+    <div class="item-list">
+      <div class="item-row">천막 (11개 남음, 최대 6개)
+        <button onclick="updateQuantity('tent', -1)">-</button>
+        <span id="tent" data-max="6">0</span>
+        <button onclick="updateQuantity('tent', 1)">+</button>
+      </div>
+      <div class="item-row">테이블 (23개 남음, 최대 12개)
+        <button onclick="updateQuantity('table', -1)">-</button>
+        <span id="table" data-max="12">0</span>
+        <button onclick="updateQuantity('table', 1)">+</button>
+      </div>
+      <div class="item-row">의자 (30개 남음, 제한 없음)
+        <button onclick="updateQuantity('chair', -1)">-</button>
+        <span id="chair" data-max="30">0</span>
+        <button onclick="updateQuantity('chair', 1)">+</button>
+      </div>
+      <div class="item-row">무전기 (6개 남음)
+        <button onclick="updateQuantity('radio', -1)">-</button>
+        <span id="radio" data-max="6">0</span>
+        <button onclick="updateQuantity('radio', 1)">+</button>
+      </div>
+      <div class="item-row">확성기 (6개 남음)
+        <button onclick="updateQuantity('speaker', -1)">-</button>
+        <span id="speaker" data-max="6">0</span>
+        <button onclick="updateQuantity('speaker', 1)">+</button>
+      </div>
+      <div class="item-row">명찰 (83개 남음)
+        <button onclick="updateQuantity('nameTag', -1)">-</button>
+        <span id="nameTag" data-max="83">0</span>
+        <button onclick="updateQuantity('nameTag', 1)">+</button>
+      </div>
+      <div class="item-row">이젤 (6개 남음)
+        <button onclick="updateQuantity('easel', -1)">-</button>
+        <span id="easel" data-max="6">0</span>
+        <button onclick="updateQuantity('easel', 1)">+</button>
+      </div>
+      <div class="item-row">돗자리 (9개 남음)
+        <button onclick="updateQuantity('mat', -1)">-</button>
+        <span id="mat" data-max="9">0</span>
+        <button onclick="updateQuantity('mat', 1)">+</button>
+      </div>
+      <div class="item-row">1인용 돗자리 (96개 남음)
+        <button onclick="updateQuantity('mat1', -1)">-</button>
+        <span id="mat1" data-max="96">0</span>
+        <button onclick="updateQuantity('mat1', 1)">+</button>
+      </div>
+      <div class="item-row">면장갑 (70개 남음)
+        <button onclick="updateQuantity('glove', -1)">-</button>
+        <span id="glove" data-max="70">0</span>
+        <button onclick="updateQuantity('glove', 1)">+</button>
+      </div>
+      <div class="item-row">줄다리기 줄 15m (1개)
+        <button onclick="updateQuantity('rope15', -1)">-</button>
+        <span id="rope15" data-max="1">0</span>
+        <button onclick="updateQuantity('rope15', 1)">+</button>
+      </div>
+      <div class="item-row">줄다리기 줄 25m (1개)
+        <button onclick="updateQuantity('rope25', -1)">-</button>
+        <span id="rope25" data-max="1">0</span>
+        <button onclick="updateQuantity('rope25', 1)">+</button>
+      </div>
+      <div class="item-row">엠프 유선 (1개)
+        <button onclick="updateQuantity('amp1', -1)">-</button>
+        <span id="amp1" data-max="1">0</span>
+        <button onclick="updateQuantity('amp1', 1)">+</button>
+      </div>
+      <div class="item-row">엠프 무선 (1개)
+        <button onclick="updateQuantity('amp2', -1)">-</button>
+        <span id="amp2" data-max="1">0</span>
+        <button onclick="updateQuantity('amp2', 1)">+</button>
+      </div>
+      <div class="item-row">리드선 50m (1개)
+        <button onclick="updateQuantity('lead50', -1)">-</button>
+        <span id="lead50" data-max="1">0</span>
+        <button onclick="updateQuantity('lead50', 1)">+</button>
+      </div>
+      <div class="item-row">리드선 30m (3개)
+        <button onclick="updateQuantity('lead30', -1)">-</button>
+        <span id="lead30" data-max="3">0</span>
+        <button onclick="updateQuantity('lead30', 1)">+</button>
+      </div>
+      <div class="item-row">운반기 대형 (2개)
+        <button onclick="updateQuantity('cartBig', -1)">-</button>
+        <span id="cartBig" data-max="2">0</span>
+        <button onclick="updateQuantity('cartBig', 1)">+</button>
+      </div>
+      <div class="item-row">운반기 소형 (1개)
+        <button onclick="updateQuantity('cartSmall', -1)">-</button>
+        <span id="cartSmall" data-max="1">0</span>
+        <button onclick="updateQuantity('cartSmall', 1)">+</button>
+      </div>
+      <div class="item-row">운반기 L카트 (1개)
+        <button onclick="updateQuantity('cartL', -1)">-</button>
+        <span id="cartL" data-max="1">0</span>
+        <button onclick="updateQuantity('cartL', 1)">+</button>
+      </div>
+    </div>
+
+    <a href="submit.html" class="next-btn" onclick="saveItems()">다음</a>
+    <a href="return.html" class="back-btn">반납일 선택으로 돌아가기</a>
+  </div>
+</body>
+</html>
