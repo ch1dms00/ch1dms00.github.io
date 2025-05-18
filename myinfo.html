@@ -1,9 +1,8 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>내 정보</title>
-  <link rel="stylesheet" href="style.css">
   <style>
     body {
       font-family: 'Segoe UI';
@@ -58,56 +57,71 @@
   </div>
 
   <script>
-    document.addEventListener('DOMContentLoaded', async () => {
-      const name = localStorage.getItem('myRepName'); // 대표자 이름
-      const requestList = document.getElementById('request-list');
+    document.addEventListener('DOMContentLoaded', () => {
+      const repName = localStorage.getItem('myRepName');
+      const recordContainer = document.getElementById('record-container');
+      const allRequests = JSON.parse(localStorage.getItem('myRequests') || '[]');
 
-      try {
-        const res = await fetch(`/api/my-requests?name=${encodeURIComponent(name)}`);
-        const data = await res.json();
-
-        if (!data || data.length === 0) return;
-
-        requestList.innerHTML = ''; // 기존 "신청 내역 없음" 제거
-
-        data.forEach(request => {
-          const div = document.createElement('div');
-          div.className = 'request-card';
-          div.innerHTML = `
-            <p><strong>신청자:</strong> ${request.name}</p>
-            <p><strong>대여일:</strong> ${request.startDate}</p>
-            <p><strong>반납일:</strong> ${request.endDate}</p>
-            <p><strong>대여 물품:</strong> ${request.items.map(i => `${i.name} (${i.count}개)`).join(', ')}</p>
-            <p><strong>사유:</strong> ${request.reason}</p>
-            <button class="cancel-btn" onclick="cancelRequest('${request._id}')">신청 취소</button>
-          `;
-          requestList.appendChild(div);
-        });
-      } catch (err) {
-        console.error('데이터를 불러오는 중 오류 발생:', err);
+      if (!repName || allRequests.length === 0) {
+        recordContainer.innerHTML = '<p>신청 내역이 없습니다.</p>';
+        return;
       }
-    });
 
-    async function cancelRequest(id) {
-      if (!confirm('정말 신청을 취소하시겠습니까?')) return;
+      // 대표자 이름과 일치하는 내역만 필터링
+      const myRequests = allRequests.filter(r => r.repName === repName);
 
-      try {
-        const res = await fetch(`/api/cancel-request/${id}`, {
-          method: 'DELETE'
-        });
-        const result = await res.json();
+      if (myRequests.length === 0) {
+        recordContainer.innerHTML = '<p>신청 내역이 없습니다.</p>';
+        return;
+      }
 
-        if (result.success) {
-          alert('신청이 취소되었습니다.');
-          location.reload();
-        } else {
-          alert('취소에 실패했습니다.');
+      myRequests.forEach((request, index) => {
+        const div = document.createElement('div');
+        div.className = 'record';
+        div.innerHTML = `
+          <p><strong>소속:</strong> ${request.department}</p>
+          <p><strong>학번:</strong> ${request.grade}</p>
+          <p><strong>대표자 이름:</strong> ${request.repName}</p>
+          <p><strong>대표자 연락처:</strong> ${request.repPhone}</p>
+          <p><strong>대리인 이름:</strong> ${request.agentName || '-'}</p>
+          <p><strong>대리인 연락처:</strong> ${request.agentPhone || '-'}</p>
+          <p><strong>사용 장소:</strong> ${request.place}</p>
+          <p><strong>대여 물품 및 수량:</strong> ${request.items.replace(/\n/g, '<br>')}</p>
+          <p><strong>대여일자:</strong> ${request.rentalDate}</p>
+          <p><strong>반납일자:</strong> ${request.returnDate}</p>
+          <p><strong>대여 사유:</strong> ${request.reason || '-'}</p>
+          <p><strong>비고:</strong> ${request.note || '-'}</p>
+          <button class="delete-btn" data-index="${index}">신청 취소</button>
+        `;
+        recordContainer.appendChild(div);
+      });
+
+      // 삭제 버튼 이벤트 위임
+      recordContainer.addEventListener('click', (e) => {
+        if (e.target.classList.contains('delete-btn')) {
+          const idx = e.target.getAttribute('data-index');
+          if (confirm('정말 신청을 취소하시겠습니까?')) {
+            // 내역 삭제
+            myRequests.splice(idx, 1);
+
+            // 전체 요청 중 해당 대표자의 내역도 같이 삭제
+            const updatedRequests = allRequests.filter(r => !(r.repName === repName && myRequests.indexOf(r) === -1));
+
+            // 아래는 더 안전한 방법: 전체 요청에서 대표자 이름이 같은 건 빼고, 남은 것 + 삭제 후 myRequests 다시 합침
+            // 하지만 위 로직가까운 것으로 간단히 처리
+
+            // 여기선 myRequests 배열을 localStorage에 다시 저장
+            // 전체 요청(allRequests)에서 대표자 이름이 같은 것만 제외한 나머지 합쳐서 저장
+            const filteredRequests = allRequests.filter(r => r.repName !== repName);
+            const newRequests = filteredRequests.concat(myRequests);
+            localStorage.setItem('myRequests', JSON.stringify(newRequests));
+
+            alert('신청이 취소되었습니다.');
+            location.reload();
+          }
         }
-      } catch (err) {
-        alert('서버 오류로 취소에 실패했습니다.');
-        console.error(err);
-      }
-    }
+      });
+    });
   </script>
 </body>
 </html>
