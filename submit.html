@@ -110,44 +110,31 @@
       };
 
       fetch('http://localhost:3000/api/rental', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify(data)
-})
-  .then(res => res.json())
-  .then(res => {
-    console.log('서버 응답:', res);  // ✅ 여기 중요
-    if (res.success) {
-      location.href = 'submit_notice.html';
-    } else {
-      alert('❌ 저장 실패 (서버 응답 오류)');
-    }
-  })
-  .catch(err => {
-    console.error('❌ fetch 실패:', err);
-    alert('❌ 저장 실패: ' + err.message);
-  });
-  fetch('http://localhost:3000/api/rental', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify(data)
-})
-  .then(res => res.json())
-  .then(res => {
-    console.log('서버 응답:', res);  // ✅ 여기 중요
-    if (res.success) {
-      location.href = 'submit_notice.html';
-    } else {
-      alert('❌ 저장 실패 (서버 응답 오류)');
-    }
-  })
-  .catch(err => {
-    console.error('❌ fetch 실패:', err);
-    alert('❌ 저장 실패: ' + err.message);
-  });
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      })
+      .then(res => res.json())
+      .then(res => {
+        console.log('서버 응답:', res);
+        if (res.success) {
+          // 로컬스토리지에 저장 (내 정보 페이지에서 불러오기 위함)
+          let myRequests = JSON.parse(localStorage.getItem('myRequests') || '[]');
+          myRequests.push(data);
+          localStorage.setItem('myRequests', JSON.stringify(myRequests));
+          // 대표자 이름 저장
+          localStorage.setItem('myRepName', data.repName);
 
-})
-</script>
-
+          location.href = 'submit_notice.html';
+        } else {
+          alert('❌ 저장 실패 (서버 응답 오류)');
+        }
+      })
+      .catch(err => {
+        console.error('❌ fetch 실패:', err);
+        alert('❌ 저장 실패: ' + err.message);
+      });
+    });
+  </script>
 </body>
 </html>
