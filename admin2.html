@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>관리자 페이지</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f9f9fb;
+      padding: 2rem;
+    }
+    .admin-container {
+      max-width: 600px;
+      margin: auto;
+      background: white;
+      padding: 2rem;
+      border-radius: 1rem;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+    }
+    h2 {
+      color: #6C63FF;
+      margin-bottom: 1rem;
+    }
+    label {
+      font-weight: bold;
+      margin-top: 1rem;
+      display: block;
+    }
+    input, textarea {
+      width: 100%;
+      padding: 0.8rem;
+      margin-top: 0.3rem;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+    button {
+      margin-top: 1.2rem;
+      padding: 0.8rem 1.5rem;
+      background-color: #6C63FF;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #594ae2;
+    }
+  </style>
+</head>
+<body>
+  <div class="admin-container">
+    <h2>📢 공지사항 추가</h2>
+    <form id="noticeForm">
+      <label for="title">제목</label>
+      <input type="text" id="title" required />
+
+      <label for="content">내용</label>
+      <textarea id="content" rows="5" required></textarea>
+
+      <button type="submit">공지사항 등록</button>
+    </form>
+  </div>
+
+  <script>
+    document.getElementById('noticeForm').addEventListener('submit', function (e) {
+      e.preventDefault();
+      const title = document.getElementById('title').value.trim();
+      const content = document.getElementById('content').value.trim();
+      if (!title || !content) return;
+
+      const notices = JSON.parse(localStorage.getItem('notices') || '[]');
+      notices.unshift({ title, content, date: new Date().toLocaleString() });
+      localStorage.setItem('notices', JSON.stringify(notices));
+
+      alert('공지사항이 등록되었습니다!');
+      document.getElementById('noticeForm').reset();
+    });
+  </script>
+</body>
+</html>
