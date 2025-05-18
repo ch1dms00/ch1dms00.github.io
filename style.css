@@ -1,0 +1,546 @@
+body {
+    margin:0;
+    padding:0;
+    background-color:#f1edff;
+    font-family: 'Segoe UI', sans-serif;
+    height: auto; /* 높이를 자동으로 설정해서 콘텐츠가 많으면 자동 스크롤이 됩니다. */
+    overflow-y: auto; /* 세로 스크롤이 필요할 때만 자동으로 나타납니다. */
+}
+
+
+.new-main-container {
+    text-align: center;
+    width: 100%;
+    padding-top: 20px;
+}
+
+.main-logo {
+    width: 120px;
+    margin-bottom: 25px;
+}
+
+.new-menu-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    padding: 20px;
+    max-width: 450px;
+    margin: auto;
+}
+
+.new-menu-item {
+    background-color: #ffffff;
+    color: #4a54e1;
+    padding: 20px;
+    border-radius: 15px;
+    font-size: 15px;
+    font-weight: 600;
+    text-decoration: none;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    height: 140px; /* 명확한 정사각형 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 2px solid #dfe3f8;
+    transition: all 0.3s;
+}
+
+.new-menu-item:hover {
+    border-color: #a1aaf2;
+    transform: translateY(-4px);
+}
+
+/* 모바일 최적화 반응형 조정 */
+@media (max-width: 500px) {
+    .new-menu-item {
+        height: 120px;
+        font-size: 13px;
+    }
+
+    .main-logo {
+        width: 100px;
+    }
+
+    .new-menu-grid {
+        gap: 12px;
+        padding: 15px;
+    }
+}
+
+/* 로그인 페이지 전용 스타일 */
+/* 로그인 페이지 전용 스타일 다시 명시 */
+.login-page-container {
+    width: 90%;
+    max-width: 400px;
+    background-color: #ffffff;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    text-align: center;
+    margin: 0 auto;
+}
+
+.login-logo {
+    width: 90px;
+    margin-bottom: 20px;
+}
+
+.login-page-container input[type="text"],
+.login-page-container input[type="password"] {
+    width: 100%;
+    padding: 12px;
+    margin: 8px 0;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+}
+
+.login-remember {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+    justify-content: center;
+    font-size: 14px;
+}
+
+.login-page-container button {
+    width: 100%;
+    padding: 12px;
+    background-color: #7b68ee;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.login-page-container button:hover {
+    background-color: #6959cd;
+}
+
+.login-page-container #message {
+    margin-top: 15px;
+    font-size: 14px;
+}
+
+/* 로그인 페이지용 body 별도 설정 */
+body.login-page {
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
+    overflow:hidden;
+    background-color:#f0f4ff;
+}
+
+
+body {
+    background-image: url('배경.jpg');
+    background-size: cover;  /* 화면에 꽉 차게 조정 */
+    background-position: center; /* 중앙에 배치 */
+    background-repeat: no-repeat;
+    background-attachment: fixed; /* 스크롤 해도 배경 고정 */
+}
+body {
+    margin:0;
+    padding:0;
+    background-color:#f1edff;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+.intro-wrapper {
+    position: relative;
+    width: 100%;
+    max-width: 500px;
+    margin: 0 auto;
+    text-align: center;
+    padding-top: 20px;
+}
+
+
+
+.intro-title {
+    color: #000000;
+    margin-bottom: 40px;
+    font-size: 18px;
+}
+
+.intro-oval {
+    display: inline-block;
+    padding: 10px 25px;
+    background-color: #c2a9ff;
+    color: #ffffff;
+    border-radius: 50px;
+    margin-bottom: 15px;
+    font-size: 15px;
+    box-shadow: 0 3px 5px rgba(0,0,0,0.1);
+}
+
+.intro-btn-group {
+    margin-top: 40px;
+}
+
+.intro-btn {
+    display: block; 
+    width: 80%;
+    padding: 14px;
+    margin: 10px auto;
+    background-color: #b29dff;
+    color: white !important;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 600;
+    box-shadow: 0 3px 5px rgba(0,0,0,0.1);
+    transition: 0.3s;
+    text-decoration: none; /* 링크 밑줄 제거 */
+    border: none; /* 링크 기본 테두리 제거 */
+    text-align: center; /* 텍스트 중앙 정렬 */
+}
+
+.intro-btn:hover {
+    background-color: #a38aff;
+    transform: translateY(-2px);
+}
+
+
+.back-btn {
+    display: inline-block;
+    margin-top: 30px;
+    padding: 8px 15px;
+    background-color: #ff5a5f;
+    color: white;
+    border-radius: 8px;
+    font-size: 13px;
+    text-decoration: none;
+    transition: 0.3s;
+}
+
+.back-btn:hover {
+    background-color: #e04c50;
+}
+
+.intro-text {
+    padding: 15px;
+    margin: 15px auto 25px;
+    width: 85%;
+    font-size: 15px; /* 글자 크기 증가 */
+    line-height: 1.8;
+    color: #333;
+    text-align: left;
+    font-weight: 500; /* 글자 굵기 증가 */
+}
+
+.intro-oval {
+    display: inline-block;
+    padding: 12px 30px;
+    background-color: #c2a9ff;
+    color: #ffffff;
+    border-radius: 50px;
+    margin-bottom: 15px;
+    font-size: 17px; /* 글자 크기 증가 */
+    font-weight: 600; /* 굵게 설정 */
+    box-shadow: 0 3px 5px rgba(0,0,0,0.1);
+}
+
+.intro-btn {
+    padding: 14px;
+    margin: 10px auto;
+    background-color: #b29dff;
+    color: white;
+    border-radius: 10px;
+    font-size: 15px; /* 글자 크기 증가 */
+    font-weight: 600; /* 굵게 설정 */
+    box-shadow: 0 3px 5px rgba(0,0,0,0.1);
+    width: 80%;
+    transition: 0.3s;
+}
+
+
+/* 소개 페이지용 body 별도 설정 */
+body.intro-page {
+    margin:0;
+    padding:20px 0;
+    background-color:#f1edff;
+    font-family: 'Segoe UI', sans-serif;
+    height:auto;
+    overflow-y:auto;
+}
+
+.location-container {
+    width: 90%;
+    max-width: 550px;
+    margin: 20px auto;
+    padding: 20px;
+    text-align: center;
+}
+
+.location-img {
+    width: 100%;
+    max-width: 400px;
+    border-radius: 12px;
+    box-shadow: 0 3px 5px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+}
+
+.location-title {
+    color: #4a54e1;
+    font-size: 18px;
+    margin-bottom: 15px;
+}
+
+.location-info {
+    text-align: left;
+    background-color: rgba(255,255,255,0.8);
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    font-size: 14px;
+    line-height: 1.8;
+}
+
+.location-info strong {
+    color: #4a54e1;
+}
+
+.location-notice {
+    margin-top: 10px;
+    padding-left: 20px;
+}
+
+.location-notice li {
+    margin-bottom: 5px;
+}
+
+
+.welfare-container {
+    width: 90%;
+    max-width: 550px;
+    margin: 30px auto;
+    padding: 20px;
+    text-align: center;
+  }
+  
+  .welfare-title {
+    color: #4a54e1;
+    font-size: 20px;
+    margin-bottom: 10px;
+  }
+  
+  .welfare-notice {
+    color: #ff5a5f;
+    font-size: 13px;
+    margin-bottom: 20px;
+  }
+  
+  .welfare-box {
+    background-color: #b29dff;
+    color: white;
+    padding: 15px;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 600;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    margin: 10px auto;
+    width: 90%;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+  
+  .welfare-box:hover {
+    background-color: #a38aff;
+  }
+  
+  .welfare-detail {
+    background-color: rgba(255,255,255,0.95);
+    color: #333;
+    font-size: 14px;
+    padding: 12px;
+    border-left: 4px solid #a38aff;
+    border-radius: 8px;
+    width: 85%;
+    margin: 5px auto 15px;
+    text-align: left;
+    line-height: 1.6;
+  }
+  
+  .org-container {
+    text-align: center;
+    padding: 30px 20px;
+  }
+  
+  .org-title {
+    font-size: 20px;
+    color: #4a54e1;
+    margin-bottom: 20px;
+  }
+  
+  .org-img {
+    width: 100%;
+    max-width: 600px;
+    border-radius: 12px;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+    margin-bottom: 30px;
+  }
+
+  .notice-container {
+    width: 90%;
+    max-width: 550px;
+    margin: 30px auto;
+    padding: 20px;
+    text-align: center;
+  }
+  
+  .notice-title {
+    color: #4a54e1;
+    font-size: 20px;
+    margin-bottom: 20px;
+  }
+  
+  .contact-box {
+    background-color: #f5f1ff;
+    border-left: 5px solid #a38aff;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 30px;
+    text-align: left;
+    font-size: 14px;
+    line-height: 1.6;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  }
+  
+  .contact-box strong {
+    color: #4a54e1;
+  }
+  
+  .notice-list {
+    background-color: #ffffff;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  }
+  
+  .notice-placeholder {
+    color: #999;
+    font-size: 14px;
+  }
+  
+
+  .rental-container {
+    width: 90%;
+    max-width: 500px;
+    margin: 30px auto;
+    text-align: center;
+  }
+  
+  .rental-title {
+    font-size: 22px;
+    color: #4a54e1;
+    margin-bottom: 20px;
+  }
+  
+  .calendar-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 15px;
+  }
+  
+  .calendar-controls button {
+    background-color: #b29dff;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+  }
+  
+  #month-label {
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+  }
+  
+  .calendar-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+  
+  .calendar-row {
+    display: flex;
+  }
+  
+  .calendar-cell {
+    flex: 1;
+    padding: 12px 0;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    margin: 2px;
+    font-size: 14px;
+    background-color: #f9f9ff;
+    color: #333;
+  }
+  .calendar-row.header .calendar-cell {
+    font-weight: bold;
+    background-color: #e7e4fb;
+  }
+  .selected {
+    background-color: #7b68ee !important;
+    color: white;
+    font-weight: bold;
+    border: 2px solid #4a54e1;
+  }
+  
+  .selected-date-display {
+    margin-top: 15px;
+    font-size: 15px;
+    color: #4a54e1;
+    font-weight: 600;
+  }
+
+  .next-btn {
+    background-color: #4a54e1;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 10px;
+    text-decoration: none;
+    display: block;
+    width: 80%;
+    margin: 30px auto 0;
+    text-align: center;
+    font-weight: bold;
+    font-size: 16px;
+  }
+  .next-btn:hover {
+    background-color: #3c3ccf;
+  }
+ .time-option {
+  display: block;
+  background-color: #f0eaff;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  padding: 10px 15px;
+  margin-bottom: 10px;
+  font-weight: 500;
+  font-size: 15px;
+  color: #4a4a4a;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.time-option:hover {
+  border-color: #a28cff;
+  background-color: #e7ddff;
+}
+
+input[type="radio"] {
+  display: none;
+}
+
+input[type="radio"]:checked + .time-option {
+  background-color: #7b68ee;
+  color: white;
+  font-weight: bold;
+  border-color: #5e52d4;
+}
