@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>물품 대여 신청서</title>
+  <style>
+    body { font-family: 'Segoe UI'; background: #f3f0ff; }
+    .form-container {
+      width: 90%; max-width: 600px; margin: 30px auto;
+      background-color: #f8f5ff; padding: 20px;
+      border-radius: 10px; font-size: 14px; line-height: 1.8;
+    }
+    .form-container label { font-weight: 600; display: block; margin-top: 15px; margin-bottom: 5px; color: #333; }
+    .form-container input, .form-container textarea {
+      width: 100%; padding: 8px 10px; border: 1px solid #ccc;
+      border-radius: 6px; font-size: 14px;
+    }
+    .form-container input[type="file"] { border: none; }
+    .form-container button {
+      margin-top: 25px; width: 100%; padding: 12px;
+      background-color: #7b68ee; border: none; border-radius: 8px;
+      color: white; font-size: 15px; font-weight: bold; cursor: pointer;
+    }
+    .form-container button:hover { background-color: #6656d1; }
+    .back-btn {
+      margin-top: 10px; display: block; text-align: center;
+      background-color: #ccc; padding: 10px; border-radius: 8px;
+      font-weight: bold; color: #333; text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="form-container">
+    <h2 style="text-align:center; color:#4a54e1;">📄 물품 대여 신청서</h2>
+
+    <form id="rentalForm">
+      <label for="department">소속</label>
+      <input type="text" id="department" required>
+
+      <label for="grade">학번</label>
+      <input type="text" id="grade" required>
+
+      <label>대표자 이름</label>
+      <input type="text" name="repName" required>
+
+      <label>대표자 연락처</label>
+      <input type="text" name="repPhone" required>
+
+      <label>대리인 이름 (신청자 본인)</label>
+      <input type="text" name="agentName">
+
+      <label>대리인 연락처</label>
+      <input type="text" name="agentPhone">
+
+      <label for="place">사용 장소</label>
+      <input type="text" id="place" required>
+
+      <label for="items">대여 물품 및 수량</label>
+      <textarea id="items" rows="3" required></textarea>
+
+      <label for="rental-date">대여일자</label>
+      <input type="text" id="rental-date" required>
+
+      <label for="return-date">반납일자</label>
+      <input type="text" id="return-date" required>
+
+      <label for="reason">대여 사유</label>
+      <textarea id="reason" rows="2"></textarea>
+
+      <label for="note">비고</label>
+      <textarea id="note" rows="2"></textarea>
+
+      <label for="file">파일첨부 (공지/스캔본 등)</label>
+      <input type="file" id="file" name="file">
+
+      <button type="submit">신청서 제출</button>
+    </form>
+
+    <a href="rental_items.html" class="back-btn">이전으로 돌아가기</a>
+  </div>
+
+  <script>
+    // 대여일/반납일/물품 자동 입력
+    window.onload = function () {
+      document.getElementById("rental-date").value = localStorage.getItem("rentalDate") || "";
+      const returnDate = localStorage.getItem("returnDate") || "";
+      const returnTime = localStorage.getItem("returnTime") || "";
+      document.getElementById("return-date").value = returnDate + " " + returnTime;
+      document.getElementById("items").value = localStorage.getItem("rentalItems") || "";
+    };
+
+    // 폼 제출 이벤트
+    document.getElementById('rentalForm').addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      const data = {
+        department: document.getElementById('department').value,
+        grade: document.getElementById('grade').value,
+        repName: document.getElementsByName('repName')[0].value,
+        repPhone: document.getElementsByName('repPhone')[0].value,
+        agentName: document.getElementsByName('agentName')[0].value,
+        agentPhone: document.getElementsByName('agentPhone')[0].value,
+        place: document.getElementById('place').value,
+        items: document.getElementById('items').value,
+        rentalDate: document.getElementById('rental-date').value,
+        returnDate: document.getElementById('return-date').value,
+        reason: document.getElementById('reason').value,
+        note: document.getElementById('note').value
+      };
+
+      fetch('http://localhost:3000/api/rental', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify(data)
+})
+  .then(res => res.json())
+  .then(res => {
+    console.log('서버 응답:', res);  // ✅ 여기 중요
+    if (res.success) {
+      location.href = 'submit_notice.html';
+    } else {
+      alert('❌ 저장 실패 (서버 응답 오류)');
+    }
+  })
+  .catch(err => {
+    console.error('❌ fetch 실패:', err);
+    alert('❌ 저장 실패: ' + err.message);
+  });
+  fetch('http://localhost:3000/api/rental', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify(data)
+})
+  .then(res => res.json())
+  .then(res => {
+    console.log('서버 응답:', res);  // ✅ 여기 중요
+    if (res.success) {
+      location.href = 'submit_notice.html';
+    } else {
+      alert('❌ 저장 실패 (서버 응답 오류)');
+    }
+  })
+  .catch(err => {
+    console.error('❌ fetch 실패:', err);
+    alert('❌ 저장 실패: ' + err.message);
+  });
+
+})
+</script>
+
+</body>
+</html>
