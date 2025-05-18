@@ -11,10 +11,10 @@ const PORT = 3000;
 app.use(cors());
 app.use(bodyParser.json());
 
-app.use(express.static(__dirname));
+app.use(express.static(path.join(__dirname, '..')));
 
-
-
+// 추가: admin 폴더도 정적 서빙
+app.use('/admin', express.static(path.join(__dirname, '..', 'admin')));
 
 const submissionsPath = path.join(__dirname, 'submissions.json');
 const inventoryPath = path.join(__dirname, 'inventory.json');
@@ -85,4 +85,5 @@ app.get('/api/stock', (req, res) => {
 app.listen(PORT, () => {
   console.log(`✅ 서버 실행 중: http://localhost:${PORT}`);
 });
+
 
