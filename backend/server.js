@@ -9,7 +9,9 @@ const app = express();
 const PORT = 3000;
 
 app.use(cors());
-app.use(bodyParser.json());
+
+// JSON 바디 파서 용량 제한 20MB로 설정
+app.use(bodyParser.json({ limit: '20mb' }));
 
 app.use(express.static(path.join(__dirname, '..')));
 
@@ -86,4 +88,15 @@ app.listen(PORT, () => {
   console.log(`✅ 서버 실행 중: http://localhost:${PORT}`);
 });
 
+// 대여 신청 목록 조회 (GET)
+app.get('/api/rental', (req, res) => {
+  try {
+    const submissions = fs.existsSync(submissionsPath)
+      ? JSON.parse(fs.readFileSync(submissionsPath, 'utf8'))
+      : [];
+    res.json({ success: true, submissions });
+  } catch {
+    res.status(500).json({ success: false, message: '파일 읽기 실패' });
+  }
+});
 
