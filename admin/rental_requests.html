@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -14,8 +15,6 @@
 </head>
 <body>
   <h1>대여 신청 관리</h1>
-  <button onclick="location.href='index.html'">← 관리자 페이지로</button>
-
   <table>
     <thead>
       <tr>
@@ -23,7 +22,7 @@
         <th>학번</th>
         <th>대표자 이름</th>
         <th>대표자 연락처</th>
-        <th>대리인 이름(신청자 본인)</th>
+        <th>대리인 이름</th>
         <th>대리인 연락처</th>
         <th>사용 장소</th>
         <th>대여 물품 및 수량</th>
@@ -35,105 +34,125 @@
         <th>조치</th>
       </tr>
     </thead>
-    <tbody id="requestsBody">
-      <!-- 신청 내역이 여기에 표시됩니다 -->
-    </tbody>
+    <tbody id="requestsBody"></tbody>
   </table>
 
-  <script>
-    const tbody = document.getElementById('requestsBody');
-    let requests = [];
+<script>
+  const tbody = document.getElementById('requestsBody');
+  let requests = [];
 
-    // 서버에서 받는 items 데이터를 그대로 출력하거나 포맷팅용 함수
-    function formatItems(items) {
-      // 만약 items가 문자열이면 그대로 반환
-      if (typeof items === 'string') return items;
-      // 배열이면 콤마로 연결
-      if (Array.isArray(items)) return items.join(', ');
-      return '';
-    }
+  function formatItems(items) {
+    if (!items) return '';
+    if (typeof items === 'string') return items.replace(/\n/g, '<br>');
+    if (Array.isArray(items)) return items.join(', ');
+    return '';
+  }
 
-    function fetchRequests() {
-      fetch('http://localhost:3000/api/rental')
-        .then(res => res.json())
-        .then(data => {
-          console.log('서버 응답 데이터:', data);
-
-          // data가 배열인지 체크
-          if (Array.isArray(data)) {
-            requests = data;
-            render();
-          } else if (data.success && Array.isArray(data.submissions)) {
-            requests = data.submissions;
-            render();
-          } else {
-            tbody.innerHTML = '<tr><td colspan="14">신청서 목록을 불러오지 못했습니다.</td></tr>';
-          }
-        })
-        .catch(err => {
-          console.error('서버 통신 오류:', err);
-          tbody.innerHTML = '<tr><td colspan="14">서버와 통신 실패</td></tr>';
-        });
-    }
-
-    function render() {
-      tbody.innerHTML = '';
-
-      if (requests.length === 0) {
-        const tr = document.createElement('tr');
-        const td = document.createElement('td');
-        td.colSpan = 14;
-        td.textContent = '등록된 대여 신청이 없습니다.';
-        tr.appendChild(td);
-        tbody.appendChild(tr);
-        return;
-      }
-
-      requests.forEach((req, idx) => {
-        const tr = document.createElement('tr');
-
-        tr.innerHTML = `
-          <td>${req.department || ''}</td>
-          <td>${req.grade || ''}</td>
-          <td>${req.repName || ''}</td>
-          <td>${req.repPhone || ''}</td>
-          <td>${req.agentName || ''}</td>
-          <td>${req.agentPhone || ''}</td>
-          <td>${req.place || ''}</td>
-          <td>${formatItems(req.items)}</td>
-          <td>${req.rentalDate || ''}</td>
-          <td>${req.returnDate || ''}</td>
-          <td>${req.reason || ''}</td>
-          <td>${req.note || ''}</td>
-          <td>${req.fileName ? `<a href="#" onclick="showFile(${idx})">${req.fileName}</a>` : ''}</td>
-          <td>
-            <button onclick="approve(${idx})" ${req.status === '승인됨' ? 'disabled' : ''}>승인</button>
-            <button onclick="cancel(${idx})" ${req.status === '취소됨' ? 'disabled' : ''}>취소</button>
-          </td>
-        `;
-
-        tbody.appendChild(tr);
+  function fetchRequests() {
+    fetch('http://localhost:3000/api/rental')
+      .then(res => res.json())
+      .then(data => {
+        requests = Array.isArray(data) ? data : (data.submissions || []);
+        render();
+      })
+      .catch(() => {
+        tbody.innerHTML = '<tr><td colspan="14">서버와 통신 실패</td></tr>';
       });
+  }
+
+  function render() {
+    tbody.innerHTML = '';
+
+    if (requests.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="14">등록된 대여 신청이 없습니다.</td></tr>';
+      return;
     }
 
-    // 임시 함수들 (필요에 따라 구현)
-    function showFile(idx) {
-      alert(`첨부파일 보기: ${requests[idx].fileName || '없음'}`);
-    }
+    requests.forEach((req, idx) => {
+      const isApproved = req.status === '승인됨';
+      const isCancelled = req.status === '취소됨';
 
-    function approve(idx) {
-      alert(`신청서 ${idx + 1} 승인 처리`);
-      // 승인 로직 추가 필요
-    }
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${req.department || ''}</td>
+        <td>${req.grade || ''}</td>
+        <td>${req.repName || ''}</td>
+        <td>${req.repPhone || ''}</td>
+        <td>${req.agentName || ''}</td>
+        <td>${req.agentPhone || ''}</td>
+        <td>${req.place || ''}</td>
+        <td>${formatItems(req.items)}</td>
+        <td>${req.rentalDate || ''}</td>
+        <td>${req.returnDate || ''}</td>
+        <td>${req.reason || ''}</td>
+        <td>${req.note || ''}</td>
+        <td>${req.fileName ? `<a href="${req.fileData || '#'}" target="_blank" download="${req.fileName}">${req.fileName}</a>` : ''}</td>
+        <td>
+          <button onclick="approve(${idx})" ${isApproved || isCancelled ? 'disabled' : ''}>승인</button>
+          <button onclick="cancel(${idx})" ${isCancelled ? 'disabled' : ''}>취소</button>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
 
-    function cancel(idx) {
-      alert(`신청서 ${idx + 1} 취소 처리`);
-      // 취소 로직 추가 필요
+  // 승인 처리
+  function approve(idx) {
+    const id = requests[idx].id;
+    if (!id) {
+      alert('해당 신청의 ID가 없습니다.');
+      return;
     }
+    fetch('http://localhost:3000/api/rental/status', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id: id, status: '승인됨' })
+    })
+    .then(res => {
+      if (!res.ok) throw new Error('네트워크 응답 실패');
+      return res.json();
+    })
+    .then(data => {
+      if (data.success) {
+        alert('승인 완료되었습니다.');
+        fetchRequests();
+      } else {
+        alert('승인 실패했습니다: ' + (data.message || ''));
+      }
+    })
+    .catch(e => alert('서버 오류가 발생했습니다.\n' + e.message));
+  }
 
-    // 페이지 로드 시 데이터 불러오기
-    window.onload = fetchRequests;
-  </script>
+  // 취소 처리 (삭제)
+  function cancel(idx) {
+    if (!confirm('정말 취소하시겠습니까?')) return;
+    const id = requests[idx].id;
+    if (!id) {
+      alert('해당 신청의 ID가 없습니다.');
+      return;
+    }
+    fetch('http://localhost:3000/api/rental/delete', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id: id })
+    })
+    .then(res => {
+      if (!res.ok) throw new Error('네트워크 응답 실패');
+      return res.json();
+    })
+    .then(data => {
+      if (data.success) {
+        alert('취소(삭제) 완료되었습니다.');
+        fetchRequests();
+      } else {
+        alert('취소 실패했습니다: ' + (data.message || ''));
+      }
+    })
+    .catch(e => alert('서버 오류가 발생했습니다.\n' + e.message));
+  }
+
+  window.onload = fetchRequests;
+</script>
+
 </body>
 </html>
-
