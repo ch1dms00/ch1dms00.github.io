@@ -1,37 +1,139 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>대여 신청 관리</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    h1 { margin-bottom: 20px; }
+    table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: center; vertical-align: middle; }
+    button { margin: 0 5px; padding: 5px 10px; cursor: pointer; }
+    button:disabled { background-color: #ccc; cursor: default; }
+  </style>
+</head>
 <body>
-    <h2>대여 신청 내역</h2>
-    <div id="requestList"></div>
-  
-    <script>
-      async function loadRequests() {
-        const res = await fetch('/api/rental-requests');
-        const data = await res.json();
-        const container = document.getElementById('requestList');
-        container.innerHTML = '';
-  
-        data.forEach(req => {
-          const div = document.createElement('div');
-          div.setAttribute('id', `request-${req.id}`);
-          div.innerHTML = `
-            <p><strong>${req.name}</strong> - ${req.item} (${req.date}) [${req.status}]</p>
-            <button onclick="confirmRequest('${req.id}')">확정</button>
-            <button onclick="cancelRequest('${req.id}')">취소</button>
-          `;
-          container.appendChild(div);
+  <h1>대여 신청 관리</h1>
+  <button onclick="location.href='index.html'">← 관리자 페이지로</button>
+
+  <table>
+    <thead>
+      <tr>
+        <th>소속</th>
+        <th>학번</th>
+        <th>대표자 이름</th>
+        <th>대표자 연락처</th>
+        <th>대리인 이름(신청자 본인)</th>
+        <th>대리인 연락처</th>
+        <th>사용 장소</th>
+        <th>대여 물품 및 수량</th>
+        <th>대여 일자</th>
+        <th>반납 일자</th>
+        <th>대여 사유</th>
+        <th>비고</th>
+        <th>첨부 파일</th>
+        <th>조치</th>
+      </tr>
+    </thead>
+    <tbody id="requestsBody">
+      <!-- 신청 내역이 여기에 표시됩니다 -->
+    </tbody>
+  </table>
+
+  <script>
+    const tbody = document.getElementById('requestsBody');
+    let requests = [];
+
+    // 서버에서 받는 items 데이터를 그대로 출력하거나 포맷팅용 함수
+    function formatItems(items) {
+      // 만약 items가 문자열이면 그대로 반환
+      if (typeof items === 'string') return items;
+      // 배열이면 콤마로 연결
+      if (Array.isArray(items)) return items.join(', ');
+      return '';
+    }
+
+    function fetchRequests() {
+      fetch('http://localhost:3000/api/rental')
+        .then(res => res.json())
+        .then(data => {
+          console.log('서버 응답 데이터:', data);
+
+          // data가 배열인지 체크
+          if (Array.isArray(data)) {
+            requests = data;
+            render();
+          } else if (data.success && Array.isArray(data.submissions)) {
+            requests = data.submissions;
+            render();
+          } else {
+            tbody.innerHTML = '<tr><td colspan="14">신청서 목록을 불러오지 못했습니다.</td></tr>';
+          }
+        })
+        .catch(err => {
+          console.error('서버 통신 오류:', err);
+          tbody.innerHTML = '<tr><td colspan="14">서버와 통신 실패</td></tr>';
         });
+    }
+
+    function render() {
+      tbody.innerHTML = '';
+
+      if (requests.length === 0) {
+        const tr = document.createElement('tr');
+        const td = document.createElement('td');
+        td.colSpan = 14;
+        td.textContent = '등록된 대여 신청이 없습니다.';
+        tr.appendChild(td);
+        tbody.appendChild(tr);
+        return;
       }
-  
-      async function confirmRequest(id) {
-        await fetch(`/api/rental-requests/${id}/confirm`, { method: 'POST' });
-        document.querySelector(`#request-${id} p`).innerText += ' → 확정됨';
-      }
-  
-      async function cancelRequest(id) {
-        await fetch(`/api/rental-requests/${id}/cancel`, { method: 'POST' });
-        document.querySelector(`#request-${id} p`).innerText += ' → 취소됨';
-      }
-  
-      loadRequests();
-    </script>
-  </body>
-  
+
+      requests.forEach((req, idx) => {
+        const tr = document.createElement('tr');
+
+        tr.innerHTML = `
+          <td>${req.department || ''}</td>
+          <td>${req.grade || ''}</td>
+          <td>${req.repName || ''}</td>
+          <td>${req.repPhone || ''}</td>
+          <td>${req.agentName || ''}</td>
+          <td>${req.agentPhone || ''}</td>
+          <td>${req.place || ''}</td>
+          <td>${formatItems(req.items)}</td>
+          <td>${req.rentalDate || ''}</td>
+          <td>${req.returnDate || ''}</td>
+          <td>${req.reason || ''}</td>
+          <td>${req.note || ''}</td>
+          <td>${req.fileName ? `<a href="#" onclick="showFile(${idx})">${req.fileName}</a>` : ''}</td>
+          <td>
+            <button onclick="approve(${idx})" ${req.status === '승인됨' ? 'disabled' : ''}>승인</button>
+            <button onclick="cancel(${idx})" ${req.status === '취소됨' ? 'disabled' : ''}>취소</button>
+          </td>
+        `;
+
+        tbody.appendChild(tr);
+      });
+    }
+
+    // 임시 함수들 (필요에 따라 구현)
+    function showFile(idx) {
+      alert(`첨부파일 보기: ${requests[idx].fileName || '없음'}`);
+    }
+
+    function approve(idx) {
+      alert(`신청서 ${idx + 1} 승인 처리`);
+      // 승인 로직 추가 필요
+    }
+
+    function cancel(idx) {
+      alert(`신청서 ${idx + 1} 취소 처리`);
+      // 취소 로직 추가 필요
+    }
+
+    // 페이지 로드 시 데이터 불러오기
+    window.onload = fetchRequests;
+  </script>
+</body>
+</html>
+
