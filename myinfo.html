@@ -10,6 +10,10 @@
     .record{border:1px solid #ddd;padding:15px;margin-top:15px;border-radius:8px;background:#fafaff;}
     .record p{margin:5px 0;}
     .delete-btn{background:#f45c5c;color:#fff;padding:6px 12px;border:none;border-radius:6px;font-size:13px;font-weight:bold;cursor:pointer;}
+    .status {font-weight:bold;padding:4px 8px;border-radius:5px;display:inline-block;margin-left:8px;}
+    .대기 {background:#f0ad4e; color:white;}
+    .승인됨 {background:#5cb85c; color:white;}
+    .거절됨 {background:#d9534f; color:white;}
   </style>
 </head>
 <body>
@@ -19,27 +23,33 @@
   </div>
 
   <script>
-    document.addEventListener('DOMContentLoaded', ()=>{
+    function renderRecords() {
       const repName = localStorage.getItem('myRepName');
       const recordEl = document.getElementById('record-container');
-      const all = JSON.parse(localStorage.getItem('myRequests')||'[]');
+      const all = JSON.parse(localStorage.getItem('myRequests') || '[]');
+      recordEl.innerHTML = '';  // 초기화
 
-      if(!repName || !all.length){
-        recordEl.innerHTML='<p>신청 내역이 없습니다.</p>'; return;
+      if (!repName || !all.length) {
+        recordEl.innerHTML = '<p>신청 내역이 없습니다.</p>';
+        return;
       }
 
-      const list = all.filter(r=>r.repName===repName);
-      if(!list.length){
-        recordEl.innerHTML='<p>신청 내역이 없습니다.</p>'; return;
+      const list = all.filter(r => r.repName === repName);
+      if (!list.length) {
+        recordEl.innerHTML = '<p>신청 내역이 없습니다.</p>';
+        return;
       }
 
-      list.forEach((req,i)=>{
-        const div=document.createElement('div'); div.className='record';
+      list.forEach((req, i) => {
+        const div = document.createElement('div');
+        div.className = 'record';
 
-        /* ★ 첨부파일 링크(있을 때만) */
         const fileHTML = (req.fileName && req.fileData)
           ? `<p><strong>첨부 파일:</strong> <a href="${req.fileData}" download="${req.fileName}">${req.fileName}</a></p>`
           : '';
+
+        const statusText = req.status || '대기';
+        const statusClass = statusText;
 
         div.innerHTML = `
           <p><strong>소속:</strong> ${req.department}</p>
@@ -49,33 +59,40 @@
           <p><strong>대리인 이름:</strong> ${req.agentName || '-'}</p>
           <p><strong>대리인 연락처:</strong> ${req.agentPhone || '-'}</p>
           <p><strong>사용 장소:</strong> ${req.place}</p>
-          <p><strong>대여 물품 및 수량:</strong> ${req.items.replace(/\\n/g,'<br>')}</p>
+          <p><strong>대여 물품 및 수량:</strong> ${req.items.replace(/\n/g, '<br>')}</p>
           <p><strong>대여일자:</strong> ${req.rentalDate}</p>
           <p><strong>반납일자:</strong> ${req.returnDate}</p>
           <p><strong>대여 사유:</strong> ${req.reason || '-'}</p>
           <p><strong>비고:</strong> ${req.note || '-'}</p>
           ${fileHTML}
+          <p><strong>신청 상태:</strong> <span class="status ${statusClass}">${statusText}</span></p>
           <button class="delete-btn" data-idx="${i}">신청 취소</button>
         `;
         recordEl.appendChild(div);
       });
 
       /* 삭제 */
-      recordEl.addEventListener('click',e=>{
-        if(!e.target.classList.contains('delete-btn')) return;
-        const idx=+e.target.dataset.idx;
-        if(!confirm('정말 신청을 취소하시겠습니까?')) return;
+      recordEl.addEventListener('click', e => {
+        if (!e.target.classList.contains('delete-btn')) return;
+        const idx = +e.target.dataset.idx;
+        if (!confirm('정말 신청을 취소하시겠습니까?')) return;
 
-        list.splice(idx,1);        // 내 리스트에서 제거
-        /* all 에서도 제거 */
-        const remain = all.filter(r=>!(r.repName===repName && list.indexOf(r)===-1));
-        const saved = all.filter(r=>r.repName!==repName).concat(list);
-        localStorage.setItem('myRequests',JSON.stringify(saved));
+        list.splice(idx, 1);
+        const saved = all.filter(r => r.repName !== repName).concat(list);
+        localStorage.setItem('myRequests', JSON.stringify(saved));
         alert('신청이 취소되었습니다.');
-        location.reload();
+        renderRecords();
       });
+    }
+
+    document.addEventListener('DOMContentLoaded', renderRecords);
+
+    // 다른 탭에서 myRequests 변경 시 자동 갱신
+    window.addEventListener('storage', (e) => {
+      if (e.key === 'myRequests') {
+        renderRecords();
+      }
     });
   </script>
 </body>
 </html>
-
