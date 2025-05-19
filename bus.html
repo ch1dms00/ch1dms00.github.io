@@ -1,69 +1,91 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>버스 대여 신청</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Pretendard&display=swap');
-
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: 'Pretendard', sans-serif;
-    }
+    @import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
 
     body {
-      background-color: #b29dff;
+      background-image: url('배경.jpg'); /* 이미지 경로에 맞게 수정 */
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+
       display: flex;
       justify-content: center;
       align-items: center;
       min-height: 100vh;
+      padding: 20px;
+      margin: 0;
+      font-family: 'Roboto', sans-serif;
     }
 
     .card {
       background-color: #ffffff;
-      padding: 40px 30px;
-      border-radius: 20px;
+      border-radius: 24px;
       box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
-      max-width: 600px;
-      text-align: center;
-    }
-
-    .card h1 {
-      font-size: 26px;
-      margin-bottom: 20px;
+      padding: 30px 40px;
+      max-width: 560px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      z-index: 1;
       color: #1a202c;
     }
 
-    .card p {
-      font-size: 18px;
+    .card .title {
+      font-size: 28px;
+      margin-bottom: 20px;
+      font-weight: 500;
+    }
+
+    .card .description {
+      font-size: 16px;
       color: #4a5568;
-      line-height: 1.6;
+      line-height: 1.5;
+      margin-bottom: 30px;
     }
 
-    .highlight {
-      font-weight: 600;
-      color: #6b46c1; /* 진한 보라 강조 */
+    .contact-wrapper {
+      display: flex;
+      justify-content: flex-start;
     }
 
-    .footer-note {
-      margin-top: 30px;
+    .contact-button {
+      background-color: #6b46c1; /* 진한 보라색 */
+      color: white;
+      padding: 12px 24px;
+      border-radius: 100px;
       font-size: 14px;
-      color: #718096;
+      font-weight: 600;
+      cursor: default;
+      user-select: none;
+      box-shadow: 0 4px 12px rgba(107, 70, 193, 0.4);
+      transition: background-color 0.3s ease;
+    }
+
+    .contact-button:hover {
+      background-color: #553c9a;
     }
   </style>
 </head>
 <body>
   <div class="card">
-    <h1>버스 대여 안내</h1>
-    <p>
-      버스 대여를 원하실 경우,<br>
-      <span class="highlight">집회신고서를 먼저 작성</span>하신 후,<br>
-      <span class="highlight">학생복지위원회 위원장에게 연락</span>하시고,<br>
-      <span class="highlight">학생복지위원회실로 방문</span>해주시기 바랍니다.
-    </p>
-    <p class="footer-note">※ 서류 양식 및 문의는 학생복지위원회에 문의해주세요.</p>
+    <div>
+      <h1 class="title">버스 대여 안내</h1>
+      <p class="description">
+        버스 대여를 원하실 경우, 집회신고서를 먼저 작성하신 후<br/>
+        학생복지위원회 위원장에게 연락하시고, 학생복지위원회실로 방문해 주시길 바랍니다.<br/><br/>
+        ※ 서류 양식 및 문의는 학생복지위원회에 문의해주세요.
+      </p>
+    </div>
+
+    <div class="contact-wrapper">
+      <div class="contact-button">학생복지위원장 유재범 ☎ 010-5049-4135</div>
+    </div>
   </div>
 </body>
 </html>
