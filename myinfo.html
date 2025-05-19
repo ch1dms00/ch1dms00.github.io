@@ -4,50 +4,12 @@
   <meta charset="UTF-8" />
   <title>내 정보</title>
   <style>
-    body {
-      font-family: 'Segoe UI';
-      background: #f3f0ff;
-      padding: 30px;
-    }
-    .info-box {
-      background: white;
-      border-radius: 10px;
-      padding: 20px;
-      max-width: 600px;
-      margin: auto;
-      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
-    }
-    h2 {
-      text-align: center;
-      color: #4a54e1;
-    }
-    .record {
-      border: 1px solid #ddd;
-      padding: 15px;
-      margin-top: 15px;
-      border-radius: 8px;
-      background: #fafaff;
-    }
-    .record p {
-      margin: 5px 0;
-    }
-    .record button {
-      margin-right: 10px;
-      padding: 6px 12px;
-      font-size: 13px;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      font-weight: bold;
-    }
-    .edit-btn {
-      background-color: #7b68ee;
-      color: white;
-    }
-    .delete-btn {
-      background-color: #f45c5c;
-      color: white;
-    }
+    body{font-family:'Segoe UI';background:#f3f0ff;padding:30px;}
+    .info-box{background:#fff;border-radius:10px;padding:20px;max-width:600px;margin:auto;box-shadow:0 3px 8px rgba(0,0,0,.1);}
+    h2{text-align:center;color:#4a54e1;}
+    .record{border:1px solid #ddd;padding:15px;margin-top:15px;border-radius:8px;background:#fafaff;}
+    .record p{margin:5px 0;}
+    .delete-btn{background:#f45c5c;color:#fff;padding:6px 12px;border:none;border-radius:6px;font-size:13px;font-weight:bold;cursor:pointer;}
   </style>
 </head>
 <body>
@@ -57,71 +19,63 @@
   </div>
 
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('DOMContentLoaded', ()=>{
       const repName = localStorage.getItem('myRepName');
-      const recordContainer = document.getElementById('record-container');
-      const allRequests = JSON.parse(localStorage.getItem('myRequests') || '[]');
+      const recordEl = document.getElementById('record-container');
+      const all = JSON.parse(localStorage.getItem('myRequests')||'[]');
 
-      if (!repName || allRequests.length === 0) {
-        recordContainer.innerHTML = '<p>신청 내역이 없습니다.</p>';
-        return;
+      if(!repName || !all.length){
+        recordEl.innerHTML='<p>신청 내역이 없습니다.</p>'; return;
       }
 
-      // 대표자 이름과 일치하는 내역만 필터링
-      const myRequests = allRequests.filter(r => r.repName === repName);
-
-      if (myRequests.length === 0) {
-        recordContainer.innerHTML = '<p>신청 내역이 없습니다.</p>';
-        return;
+      const list = all.filter(r=>r.repName===repName);
+      if(!list.length){
+        recordEl.innerHTML='<p>신청 내역이 없습니다.</p>'; return;
       }
 
-      myRequests.forEach((request, index) => {
-        const div = document.createElement('div');
-        div.className = 'record';
+      list.forEach((req,i)=>{
+        const div=document.createElement('div'); div.className='record';
+
+        /* ★ 첨부파일 링크(있을 때만) */
+        const fileHTML = (req.fileName && req.fileData)
+          ? `<p><strong>첨부 파일:</strong> <a href="${req.fileData}" download="${req.fileName}">${req.fileName}</a></p>`
+          : '';
+
         div.innerHTML = `
-          <p><strong>소속:</strong> ${request.department}</p>
-          <p><strong>학번:</strong> ${request.grade}</p>
-          <p><strong>대표자 이름:</strong> ${request.repName}</p>
-          <p><strong>대표자 연락처:</strong> ${request.repPhone}</p>
-          <p><strong>대리인 이름:</strong> ${request.agentName || '-'}</p>
-          <p><strong>대리인 연락처:</strong> ${request.agentPhone || '-'}</p>
-          <p><strong>사용 장소:</strong> ${request.place}</p>
-          <p><strong>대여 물품 및 수량:</strong> ${request.items.replace(/\n/g, '<br>')}</p>
-          <p><strong>대여일자:</strong> ${request.rentalDate}</p>
-          <p><strong>반납일자:</strong> ${request.returnDate}</p>
-          <p><strong>대여 사유:</strong> ${request.reason || '-'}</p>
-          <p><strong>비고:</strong> ${request.note || '-'}</p>
-          <button class="delete-btn" data-index="${index}">신청 취소</button>
+          <p><strong>소속:</strong> ${req.department}</p>
+          <p><strong>학번:</strong> ${req.grade}</p>
+          <p><strong>대표자 이름:</strong> ${req.repName}</p>
+          <p><strong>대표자 연락처:</strong> ${req.repPhone}</p>
+          <p><strong>대리인 이름:</strong> ${req.agentName || '-'}</p>
+          <p><strong>대리인 연락처:</strong> ${req.agentPhone || '-'}</p>
+          <p><strong>사용 장소:</strong> ${req.place}</p>
+          <p><strong>대여 물품 및 수량:</strong> ${req.items.replace(/\\n/g,'<br>')}</p>
+          <p><strong>대여일자:</strong> ${req.rentalDate}</p>
+          <p><strong>반납일자:</strong> ${req.returnDate}</p>
+          <p><strong>대여 사유:</strong> ${req.reason || '-'}</p>
+          <p><strong>비고:</strong> ${req.note || '-'}</p>
+          ${fileHTML}
+          <button class="delete-btn" data-idx="${i}">신청 취소</button>
         `;
-        recordContainer.appendChild(div);
+        recordEl.appendChild(div);
       });
 
-      // 삭제 버튼 이벤트 위임
-      recordContainer.addEventListener('click', (e) => {
-        if (e.target.classList.contains('delete-btn')) {
-          const idx = e.target.getAttribute('data-index');
-          if (confirm('정말 신청을 취소하시겠습니까?')) {
-            // 내역 삭제
-            myRequests.splice(idx, 1);
+      /* 삭제 */
+      recordEl.addEventListener('click',e=>{
+        if(!e.target.classList.contains('delete-btn')) return;
+        const idx=+e.target.dataset.idx;
+        if(!confirm('정말 신청을 취소하시겠습니까?')) return;
 
-            // 전체 요청 중 해당 대표자의 내역도 같이 삭제
-            const updatedRequests = allRequests.filter(r => !(r.repName === repName && myRequests.indexOf(r) === -1));
-
-            // 아래는 더 안전한 방법: 전체 요청에서 대표자 이름이 같은 건 빼고, 남은 것 + 삭제 후 myRequests 다시 합침
-            // 하지만 위 로직가까운 것으로 간단히 처리
-
-            // 여기선 myRequests 배열을 localStorage에 다시 저장
-            // 전체 요청(allRequests)에서 대표자 이름이 같은 것만 제외한 나머지 합쳐서 저장
-            const filteredRequests = allRequests.filter(r => r.repName !== repName);
-            const newRequests = filteredRequests.concat(myRequests);
-            localStorage.setItem('myRequests', JSON.stringify(newRequests));
-
-            alert('신청이 취소되었습니다.');
-            location.reload();
-          }
-        }
+        list.splice(idx,1);        // 내 리스트에서 제거
+        /* all 에서도 제거 */
+        const remain = all.filter(r=>!(r.repName===repName && list.indexOf(r)===-1));
+        const saved = all.filter(r=>r.repName!==repName).concat(list);
+        localStorage.setItem('myRequests',JSON.stringify(saved));
+        alert('신청이 취소되었습니다.');
+        location.reload();
       });
     });
   </script>
 </body>
 </html>
+
