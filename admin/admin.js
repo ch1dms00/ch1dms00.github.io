@@ -40,3 +40,31 @@ document.getElementById('noticeForm')?.addEventListener('submit', function(e) {
     fetch(`/api/rental-requests/${id}/cancel`, { method: 'POST' }).then(() => location.reload());
   }
   
+  // 관리자페이지가 열리면 신청서 데이터를 서버에서 가져와서 보여줌
+window.addEventListener('DOMContentLoaded', () => {
+  fetch('http://localhost:3000/api/rental')
+    .then(res => res.json())
+    .then(data => {
+      if (data.success) {
+        console.log('신청서 목록:', data.submissions);
+        // 여기서 받은 신청서 배열(data.submissions)을 화면에 뿌려주는 함수 호출
+        renderSubmissions(data.submissions);
+      } else {
+        console.error('신청서 불러오기 실패');
+      }
+    })
+    .catch(console.error);
+});
+
+// 신청서 목록을 화면에 그리는 함수 예시
+function renderSubmissions(submissions) {
+  const listContainer = document.getElementById('submissionList');
+  if (!listContainer) return;
+
+  listContainer.innerHTML = '';  // 기존 내용 초기화
+  submissions.forEach(item => {
+    const div = document.createElement('div');
+    div.textContent = JSON.stringify(item);
+    listContainer.appendChild(div);
+  });
+}
