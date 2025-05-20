@@ -10,10 +10,11 @@
     .record{border:1px solid #ddd;padding:15px;margin-top:15px;border-radius:8px;background:#fafaff;}
     .record p{margin:5px 0;}
     .delete-btn{background:#f45c5c;color:#fff;padding:6px 12px;border:none;border-radius:6px;font-size:13px;font-weight:bold;cursor:pointer;}
+    .delete-btn:disabled {background-color: #ccc; cursor: not-allowed;}
     .status {font-weight:bold;padding:4px 8px;border-radius:5px;display:inline-block;margin-left:8px;}
     .대기 {background:#f0ad4e; color:white;}
     .승인됨 {background:#5cb85c; color:white;}
-    .거절됨 {background:#d9534f; color:white;}
+    .거절됨, .취소됨 {background:#d9534f; color:white;}
   </style>
 </head>
 <body>
@@ -23,18 +24,29 @@
   </div>
 
   <script>
-    function renderRecords() {
+    async function fetchMyRequests() {
+      try {
+        const res = await fetch('http://localhost:3000/api/rental');
+        const data = await res.json();
+        return Array.isArray(data) ? data : data.submissions || [];
+      } catch (e) {
+        console.error('데이터 불러오기 실패', e);
+        return [];
+      }
+    }
+
+    async function renderRecords() {
       const repName = localStorage.getItem('myRepName');
       const recordEl = document.getElementById('record-container');
-      const all = JSON.parse(localStorage.getItem('myRequests') || '[]');
-      recordEl.innerHTML = '';  // 초기화
-
-      if (!repName || !all.length) {
-        recordEl.innerHTML = '<p>신청 내역이 없습니다.</p>';
+      if (!repName) {
+        recordEl.innerHTML = '<p>대표자 이름이 설정되지 않았습니다.</p>';
         return;
       }
 
+      const all = await fetchMyRequests();
       const list = all.filter(r => r.repName === repName);
+      recordEl.innerHTML = '';
+
       if (!list.length) {
         recordEl.innerHTML = '<p>신청 내역이 없습니다.</p>';
         return;
@@ -51,6 +63,8 @@
         const statusText = req.status || '대기';
         const statusClass = statusText;
 
+        const disabledAttr = (statusText === '승인됨') ? 'disabled' : '';
+
         div.innerHTML = `
           <p><strong>소속:</strong> ${req.department}</p>
           <p><strong>학번:</strong> ${req.grade}</p>
@@ -66,33 +80,51 @@
           <p><strong>비고:</strong> ${req.note || '-'}</p>
           ${fileHTML}
           <p><strong>신청 상태:</strong> <span class="status ${statusClass}">${statusText}</span></p>
-          <button class="delete-btn" data-idx="${i}">신청 취소</button>
+          <button class="delete-btn" data-id="${req.id}" ${disabledAttr}>신청 취소</button>
         `;
         recordEl.appendChild(div);
       });
 
-      /* 삭제 */
-      recordEl.addEventListener('click', e => {
+      // 이벤트 위임 방식: 취소 버튼 처리
+      recordEl.addEventListener('click', async e => {
         if (!e.target.classList.contains('delete-btn')) return;
-        const idx = +e.target.dataset.idx;
+        const id = e.target.dataset.id;
+        if (!id) return;
+
         if (!confirm('정말 신청을 취소하시겠습니까?')) return;
 
-        list.splice(idx, 1);
-        const saved = all.filter(r => r.repName !== repName).concat(list);
-        localStorage.setItem('myRequests', JSON.stringify(saved));
-        alert('신청이 취소되었습니다.');
-        renderRecords();
+        try {
+          const res = await fetch('http://localhost:3000/api/rental/status', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id, status: '취소됨' })
+          });
+
+          const data = await res.json();
+          if (data.success) {
+            alert('신청이 취소되었습니다.');
+            renderRecords(); // 최신 상태 다시 반영
+          } else {
+            alert('취소 실패: ' + (data.message || ''));
+          }
+        } catch (err) {
+          alert('서버 오류가 발생했습니다.');
+        }
       });
     }
 
     document.addEventListener('DOMContentLoaded', renderRecords);
 
-    // 다른 탭에서 myRequests 변경 시 자동 갱신
+    // 다른 탭에서 변경 시 자동 반영
     window.addEventListener('storage', (e) => {
       if (e.key === 'myRequests') {
         renderRecords();
       }
     });
+
+    // 주기적으로 서버 상태 최신화 (선택 사항)
+    setInterval(renderRecords, 10000); // 10초마다 갱신
   </script>
 </body>
 </html>
+
